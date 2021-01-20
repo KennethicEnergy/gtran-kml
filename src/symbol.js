@@ -13,17 +13,19 @@ exports.addTo = function (kmlContent, symbols, featureStyleKey) {
 };
 
 function addFeatureSymbol(kml, featureStyleKey) {
-  kml.findall(".//Placemark").forEach(place => {
+  kml.findall(".//Placemark").forEach((place) => {
     const styleId = place.findtext(
-      `./ExtendedData/Data[@name="${featureStyleKey}"]/value`
+      `./ExtendedData/Data[@name="${featureStyleKey}"]/value`,
     );
     const placeStyle = et.SubElement(place, "styleUrl");
-    placeStyle.text = '#' + (styleId || featureStyleKey);
+    placeStyle.text = "#" + (styleId || featureStyleKey);
 
     // Clean up ExtendedData styleId.
-    let extendedData = place.find('./ExtendedData');
-    extendedData.remove(extendedData.find(`./Data[@name="${featureStyleKey}"]`));
-    if (extendedData.findall('./*').length === 0) {
+    let extendedData = place.find("./ExtendedData");
+    extendedData.remove(
+      extendedData.find(`./Data[@name="${featureStyleKey}"]`),
+    );
+    if (extendedData.findall("./*").length === 0) {
       place.remove(extendedData);
     }
   });
@@ -36,6 +38,9 @@ function addSymbol(kml, geomType, symbol, id = "kml_symbol") {
   switch (geomType) {
     case "Point":
       addPointSymbol(et.SubElement(style, "IconStyle"), symbol);
+      break;
+    case "MultiPoint":
+      addPolygonSymbol(et.SubElement(style, "PolyStyle"), symbol);
       break;
     case "Polygon":
       addPolygonSymbol(et.SubElement(style, "PolyStyle"), symbol);

@@ -77,6 +77,10 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
     kmlContent = prettifyXml(kmlContent, { indent: 2, newline: os.EOL });
   }
 
+  if (options.hasCdata) {
+    kmlContent = unescapeCdata(kmlContent);
+  }
+
   if (fileName) {
     let fileNameWithExt = fileName;
     if (fileNameWithExt.indexOf(".kml") === -1) {
@@ -93,10 +97,21 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
   }
 };
 
+function unescapeCdata(kmlContent) {
+  return kmlContent
+    .replace("&lt;![CDATA[&lt;", "<![CDATA[<")
+    .replace("&gt;]]&gt;", ">]]>");
+}
+
 function getGeometry(placemark) {
   var geomTag = placemark.find("./Point");
   if (geomTag) {
     return createGeometry("Point", geomTag.findtext("./coordinates"));
+  }
+
+  geomTag = placemark.find("./MultiPoint");
+  if (geomTag) {
+    return createGeometry("MultiPoint", geomTag.findtext("./coordinates"));
   }
 
   geomTag = placemark.find("./LineString");
@@ -107,7 +122,7 @@ function getGeometry(placemark) {
   geomTag = placemark.find("./Polygon");
   if (geomTag) {
     var outRingCoors = geomTag.findtext(
-      "./outerBoundaryIs/LinearRing/coordinates"
+      "./outerBoundaryIs/LinearRing/coordinates",
     );
 
     var inRingsCoors = [];
@@ -207,7 +222,7 @@ function getProperties(placemark, schemas) {
       fields.forEach(function (field) {
         properties[field.attrib.name] = convert(
           field.text,
-          schema[field.attrib.name]
+          schema[field.attrib.name],
         );
       });
     });

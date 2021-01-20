@@ -40,7 +40,7 @@ function addSymbol(kml, geomType, symbol, id = "kml_symbol") {
       addPointSymbol(et.SubElement(style, "IconStyle"), symbol);
       break;
     case "MultiPoint":
-      addPolygonSymbol(et.SubElement(style, "PolyStyle"), symbol);
+      addPolygonSymbol(et.SubElement(style, "IconStyle"), symbol);
       break;
     case "Polygon":
       addPolygonSymbol(et.SubElement(style, "PolyStyle"), symbol);

@@ -99,8 +99,8 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
 
 function unescapeCdata(kmlContent) {
   return kmlContent
-    .replace("&lt;![CDATA[&lt;", "<![CDATA[<")
-    .replace("&gt;]]&gt;", ">]]>");
+    .replace("/&lt;![CDATA[&lt;/", "<![CDATA[<")
+    .replace("/&gt;]]&gt;/", ">]]>");
 }
 
 function getGeometry(placemark) {

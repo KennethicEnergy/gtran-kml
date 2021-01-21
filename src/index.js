@@ -98,9 +98,7 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
 };
 
 function unescapeCdata(kmlContent) {
-  return kmlContent
-    .replace("/&lt;![CDATA[&lt;/", "<![CDATA[<")
-    .replace("/&gt;]]&gt;/", ">]]>");
+  return kmlContent.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 }
 
 function getGeometry(placemark) {
